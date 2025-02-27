@@ -1,3 +1,7 @@
 streamlit
 google-generativeai
 dotenv
+
+pandas
+matplotlib 
+seaborn
