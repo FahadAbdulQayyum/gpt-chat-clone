@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-import time  # To simulate loading effect
+import time  
 
 # Load environment variables from .env file
 load_dotenv()
@@ -35,22 +35,27 @@ else:
     user_input = st.chat_input("Type your message...")
 
     if user_input:
-        # Add user message immediately
+        # Append user message instantly
         st.session_state.messages.append({"role": "user", "content": user_input})
 
-        # Show loading message in UI
+        # Display chat history again (including user message)
+        st.rerun()
+
+    # Check if there is a new user message that needs a bot response
+    if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+        # Show "Loading..." only in bot's response area
         with st.chat_message("assistant"):
             loading_placeholder = st.empty()
-            loading_placeholder.markdown("🔄 **Loading...**")
+            loading_placeholder.markdown("🔄 **Thinking...**")
 
         # Simulate processing delay (for better UX)
         time.sleep(1.5)
 
         # Generate response
-        response = model.generate_content(user_input)
+        response = model.generate_content(st.session_state.messages[-1]["content"])
         bot_reply = response.text if response.text else "Sorry, I couldn't respond."
 
-        # Update chat history (replace "Loading..." with actual response)
+        # Replace "Loading..." with actual response
         st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
         # Refresh UI
