@@ -16,15 +16,34 @@ else:
     genai.configure(api_key=GENAI_API_KEY)
 
     # Initialize the model
-    # model = genai.GenerativeModel("gemini-pro")
-    model = genai.GenerativeModel("gemini-1.5-pro")  # Or try "gemini-1.5-pro"
+    model = genai.GenerativeModel("gemini-1.5-pro")  
 
+    # App title
     st.title("Free GPT Chatbox")
 
-    # User input field
-    user_input = st.text_input("You:", "")
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-    if st.button("Send"):
-        if user_input:
-            response = model.generate_content(user_input)
-            st.text_area("Bot:", response.text if response.text else "Sorry, I couldn't respond.", height=100)
+    # Display chat messages
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    # --- Floating Input Box ---
+    # Use st.chat_input() for a persistent bottom input field
+    user_input = st.chat_input("Type your message...")
+
+    if user_input:
+        # Display user message
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+        # Generate response
+        response = model.generate_content(user_input)
+        bot_reply = response.text if response.text else "Sorry, I couldn't respond."
+
+        # Display bot response
+        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+
+        # Refresh UI to keep input box empty
+        st.rerun()
