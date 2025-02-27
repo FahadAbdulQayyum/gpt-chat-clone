@@ -43,19 +43,30 @@ else:
 
     # Check if there is a new user message that needs a bot response
     if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
-        # Show "Loading..." only in bot's response area
+        # Show "Thinking..." while processing
         with st.chat_message("assistant"):
             loading_placeholder = st.empty()
             loading_placeholder.markdown("🔄 **Thinking...**")
-
-        # Simulate processing delay (for better UX)
-        time.sleep(1.5)
 
         # Generate response
         response = model.generate_content(st.session_state.messages[-1]["content"])
         bot_reply = response.text if response.text else "Sorry, I couldn't respond."
 
-        # Replace "Loading..." with actual response
+        # Replace "Thinking..." with typing effect
+        with st.chat_message("assistant"):
+            response_placeholder = st.empty()
+            typed_text = ""
+            
+            # Typing effect: Show response character by character
+            for char in bot_reply:
+                typed_text += char
+                response_placeholder.markdown(typed_text + "▌")  # Cursor effect
+                time.sleep(0.03)  # Adjust speed for realistic typing effect
+            
+            # Remove cursor after typing is done
+            response_placeholder.markdown(typed_text)
+
+        # Store bot response in chat history
         st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
         # Refresh UI
