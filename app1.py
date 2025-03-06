@@ -3,6 +3,7 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 import time  
+import json
 
 # Load environment variables
 load_dotenv()
@@ -52,9 +53,29 @@ if st.button("Convert"):
         time.sleep(1)  # Simulate processing delay
 
         # Generate conversion request
-        prompt = f"Convert {value} {from_unit} to {to_unit}. Provide only the numeric result."
-        response = model.generate_content(prompt)
-        result = response.text if response.text else "Couldn't calculate."
+        prompt = f"""
+        Convert {value} {from_unit} to {to_unit}. 
+        Provide the response in strict JSON format with two keys:
+        1. "text": The conversion result as a string.
+        2. "formula": The formula used for conversion.
+        Example output: {{"text": "0.0166667", "formula": "Divide the time value by 60"}}
+        """
 
+        response = model.generate_content(prompt)
+        
+        # Debugging response
+        # print("Raw response:", response)
+        print("Raw response:", response.text)
+
+        try:
+            # Parse JSON response safely
+            response_json = json.loads(response.text or "{}")
+            result = response_json.get("text", "Couldn't calculate.")
+            formula = response_json.get("formula", "Formula unavailable.")
+        except (json.JSONDecodeError, AttributeError):
+            result = "Couldn't calculate."
+            formula = "Formula unavailable."
+
+    # Display result
     st.write(f"### {value} {from_unit} = {result} {to_unit}")
-    st.info("Formula: AI-generated conversion")
+    st.info(f"Formula: {formula}")

@@ -9,7 +9,9 @@ def analyze_password(password):
     # Calculate the meter: each special character adds 10% (capped at 100%)
     meter = min(special_count * 10, 100)
     
-    return meter
+    password_length = len(password)
+    
+    return [meter, password_length]
 
 # Function to create a custom progress bar with color
 def colored_progress_bar(percentage, color="green"):
@@ -35,24 +37,26 @@ password = st.text_input("Enter your password:", type="password")
 
 if password:
     # Analyze the password and get the meter value
-    strength_meter = analyze_password(password)
+    [meter, password_length] = analyze_password(password)
     
     # Determine the color based on the strength
-    if strength_meter < 30:
+    if meter < 30:
         color = "red"
-    elif 30 <= strength_meter < 70:
+    elif 30 <= meter < 70:
         color = "orange"
     else:
         color = "green"
     
     # Display the colored progress bar
     st.subheader("Password Strength:")
-    colored_progress_bar(strength_meter, color)
+    colored_progress_bar(meter, color)
     
     # Provide feedback based on the strength
-    if strength_meter < 30:
+    if password_length < 8:
+        st.warning("❌ Password should be at least 8 characters long.")
+    elif password_length > 8 and meter < 30:
         st.warning("Weak Password! Consider adding more special characters.")
-    elif 30 <= strength_meter < 70:
+    elif password_length > 8 and 30 <= meter < 70:
         st.info("Moderate Password. It's okay, but could be stronger.")
-    else:
+    elif password_length > 8 and 70 <= meter < 100:
         st.success("Strong Password! Good job!")
