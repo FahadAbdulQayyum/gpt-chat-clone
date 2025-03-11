@@ -3,16 +3,12 @@ from typing import List, Dict, Any
 
 # Define the type for a single book entry
 Book = Dict[str, Any]
-Library = dict[
-    "book_title": str,
-    "book_author": str,
-    "publication_year": str,
-    "genre": str,
-    "read_this_book": str,
-]
+
+# Define the type for the library (a list of books)
+Library = List[Book]
 
 def menu() -> None:
-    choice: str = str(input(
+    choice: str = input(
     """
     Welcome to your Personal Library Manager!  
     1. Add a book  
@@ -23,7 +19,7 @@ def menu() -> None:
     6. Exit  
 
     Enter your choice: """
-    ))
+    )
     match choice:
         case "1":
             add_a_book()
@@ -34,36 +30,42 @@ def menu() -> None:
         case "4":
             display_all_books()
         case "5":
-            display_statics()
+            display_statistics()
         case "6":
             print("Library saved to file. Goodbye!")
             exit()
         case _:
             print("Invalid choice. Please try again.")
             menu()
-    
 
 def add_a_book() -> None:
-    book_title: str = str(input("Enter the book title: "))
-    book_author: str = str(input("Enter the author: "))
-    publication_year: str = str(input("Enter the publication year: "))
-    genre: str = str(input("Enter the genre: "))
-    read_this_book: str = str(input("Have you read this book? (yes/no): "))
-    print(book_title, book_author, publication_year, genre, read_this_book)
-    new_book: dict[str, str] = {
-        "title": book_title,
-        "author": book_author,
+    book_title: str = input("Enter the book title: ")
+    book_author: str = input("Enter the author: ")
+    publication_year: str = input("Enter the publication year: ")
+    genre: str = input("Enter the genre: ")
+    read_this_book: str = input("Have you read this book? (yes/no): ")
+
+    # Create a new book dictionary
+    new_book: Book = {
+        "book_title": book_title,
+        "book_author": book_author,
         "publication_year": publication_year,
         "genre": genre,
-        "read_this_book": read_this_book}
-    library: List[Book] = load_library()
+        "read_this_book": read_this_book.lower() == "yes"  # Convert to boolean
+    }
 
-    library.append(new_book)  # Append the new book to the list
+    # Load the existing library
+    library: Library = load_library()
 
-    # Step 3: Save the updated library data back to the file
+    # Append the new book to the library
+    library.append(new_book)
+
+    # Save the updated library back to the file
     save_library(library)
 
-def load_library() -> List[Book]:
+    print(f"Book '{book_title}' added successfully!")
+
+def load_library() -> Library:
     try:
         # Open the file in read mode
         with open("library.txt", "r") as file:
@@ -75,52 +77,81 @@ def load_library() -> List[Book]:
     except FileNotFoundError:
         return []  # Return an empty list if the file does not exist
 
-
-# Function to save the library data to the file
-def save_library(library_data: Library):
+def save_library(library_data: Library) -> None:
     with open("library.txt", "w") as file:
         json.dump(library_data, file, indent=4)  # Write the data as a JSON array with indentation
 
-
 def remove_a_book() -> None:
-    title_of_book: str = str(input("Enter the title of the book to remove: "))
-    print(title_of_book)
+    title_of_book: str = input("Enter the title of the book to remove: ")
+
+    # Load the existing library
+    library: Library = load_library()
+
+    # Find and remove the book with the matching title
+    updated_library = [book for book in library if book["book_title"].lower() != title_of_book.lower()]
+
+    if len(updated_library) < len(library):
+        # Save the updated library back to the file
+        save_library(updated_library)
+        print(f"Book '{title_of_book}' removed successfully!")
+    else:
+        print(f"Book '{title_of_book}' not found.")
 
 def search_for_a_book() -> None:
-    search_by: str = str(input("""
+    search_by: str = input("""
     Search by:  
     1. Title  
     2. Author
                                
-    Enter your choice: """))
-    print(search_by)
-
+    Enter your choice: """)
     match search_by:
         case "1":
-            title_of_book: str = str(input("Enter the title of the book: "))
+            title_of_book: str = input("Enter the title of the book: ")
             search_by_title(title_of_book)
         case "2":
-            author_of_book: str = str(input("Enter the author of the book: "))
+            author_of_book: str = input("Enter the author of the book: ")
             search_by_author(author_of_book)
         case _:
             print("Invalid choice. Please try again.")
             search_for_a_book()
 
 def search_by_title(title: str) -> None:
-    print("Search by title", title)
+    library: Library = load_library()
+    matches = [book for book in library if title.lower() in book["book_title"].lower()]
+    if matches:
+        print(f"Found {len(matches)} book(s) with title containing '{title}':")
+        for book in matches:
+            print(book)
+    else:
+        print(f"No books found with title containing '{title}'.")
 
 def search_by_author(author: str) -> None:
-    print("Search by author", author)
+    library: Library = load_library()
+    matches = [book for book in library if author.lower() in book["book_author"].lower()]
+    if matches:
+        print(f"Found {len(matches)} book(s) by author containing '{author}':")
+        for book in matches:
+            print(book)
+    else:
+        print(f"No books found by author containing '{author}'.")
 
 def display_all_books() -> None:
-    with open("library.txt", "r") as file:
-        content = file.read()
-        content_list = list(content.split("\n"))
-        print(content_list[0])
-        # for book in content_list:
-        #     print(book)
+    library: Library = load_library()
+    if library:
+        print("All Books:")
+        for book in library:
+            print(book)
+    else:
+        print("No books in the library.")
 
-def display_statics() -> None:
-    print("Display statics")
+def display_statistics() -> None:
+    library: Library = load_library()
+    total_books = len(library)
+    read_books = sum(1 for book in library if book["read_this_book"]=="yes")
+    unread_books = total_books - read_books
+
+    print(f"Total Books: {total_books}")
+    print(f"Read Books: {read_books}")
+    print(f"Unread Books: {unread_books}")
 
 menu()
