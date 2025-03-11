@@ -1,0 +1,2 @@
+{'title': 'second', 'author': 'second', 'publication_year': 'second', 'genre': 'second', 'read_this_book': 'second'}
+{'title': 'kuja', 'author': 'kuja', 'publication_year': 'kuja', 'genre': 'kuja', 'read_this_book': 'no'}

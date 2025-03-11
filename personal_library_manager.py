@@ -37,6 +37,31 @@ def add_a_book() -> None:
     genre: str = str(input("Enter the genre: "))
     read_this_book: str = str(input("Have you read this book? (yes/no): "))
     print(book_title, book_author, publication_year, genre, read_this_book)
+    library: dict[str, str] = {
+        "title": book_title,
+        "author": book_author,
+        "publication_year": publication_year,
+        "genre": genre,
+        "read_this_book": read_this_book}
+    
+    # Step 1: Check if the file exists and contains data
+    try:
+        # Open the file in read mode to check its content
+        with open("library.txt", "r") as file:
+            content = file.read()
+    except FileNotFoundError:
+        # If the file does not exist, initialize content as empty
+        content = ""
+
+    # Step 2: Decide whether to append or overwrite
+    if content.strip():  # Check if the file has non-whitespace content
+        # Append the new data to the existing content
+        with open("library.txt", "a") as file:
+            file.write("\n" + str(library))  # Add a newline before appending
+    else:
+        # Write the new data directly (file is empty or does not exist)
+        with open("library.txt", "w") as file:
+            file.write(str(library))
 
 def remove_a_book() -> None:
     title_of_book: str = str(input("Enter the title of the book to remove: "))
