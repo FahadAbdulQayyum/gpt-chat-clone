@@ -1,2 +1,71 @@
-{'title': 'second', 'author': 'second', 'publication_year': 'second', 'genre': 'second', 'read_this_book': 'second'}
-{'title': 'kuja', 'author': 'kuja', 'publication_year': 'kuja', 'genre': 'kuja', 'read_this_book': 'no'}
+  {
+    "book_title": "To Kill a Mockingbird",
+    "book_author": "Harper Lee",
+    "publication_year": 1960,
+    "genre": "Fiction",
+    "read_this_book": true
+  },
+  {
+    "book_title": "1984",
+    "book_author": "George Orwell",
+    "publication_year": 1949,
+    "genre": "Dystopian",
+    "read_this_book": false
+  },
+  {
+    "book_title": "The Great Gatsby",
+    "book_author": "F. Scott Fitzgerald",
+    "publication_year": 1925,
+    "genre": "Classic",
+    "read_this_book": true
+  },
+  {
+    "book_title": "Pride and Prejudice",
+    "book_author": "Jane Austen",
+    "publication_year": 1813,
+    "genre": "Romance",
+    "read_this_book": false
+  },
+  {
+    "book_title": "The Catcher in the Rye",
+    "book_author": "J.D. Salinger",
+    "publication_year": 1951,
+    "genre": "Coming-of-Age",
+    "read_this_book": true
+  },
+  {
+    "book_title": "Sapiens: A Brief History of Humankind",
+    "book_author": "Yuval Noah Harari",
+    "publication_year": 2011,
+    "genre": "Non-Fiction",
+    "read_this_book": false
+  },
+  {
+    "book_title": "The Hobbit",
+    "book_author": "J.R.R. Tolkien",
+    "publication_year": 1937,
+    "genre": "Fantasy",
+    "read_this_book": true
+  },
+  {
+    "book_title": "Moby Dick",
+    "book_author": "Herman Melville",
+    "publication_year": 1851,
+    "genre": "Adventure",
+    "read_this_book": false
+  },
+  {
+    "book_title": "Crime and Punishment",
+    "book_author": "Fyodor Dostoevsky",
+    "publication_year": 1866,
+    "genre": "Psychological Fiction",
+    "read_this_book": true
+  },
+  {
+    "book_title": "The Alchemist",
+    "book_author": "Paulo Coelho",
+    "publication_year": 1988,
+    "genre": "Fiction",
+    "read_this_book": false
+  }
+,{'title': 'test', 'author': 'test', 'publication_year': '2040', 'genre': 'test', 'read_this_book': 'yes'}

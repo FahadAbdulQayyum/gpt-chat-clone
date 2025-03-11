@@ -1,3 +1,16 @@
+import json
+from typing import List, Dict, Any
+
+# Define the type for a single book entry
+Book = Dict[str, Any]
+Library = dict[
+    "book_title": str,
+    "book_author": str,
+    "publication_year": str,
+    "genre": str,
+    "read_this_book": str,
+]
+
 def menu() -> None:
     choice: str = str(input(
     """
@@ -37,31 +50,37 @@ def add_a_book() -> None:
     genre: str = str(input("Enter the genre: "))
     read_this_book: str = str(input("Have you read this book? (yes/no): "))
     print(book_title, book_author, publication_year, genre, read_this_book)
-    library: dict[str, str] = {
+    new_book: dict[str, str] = {
         "title": book_title,
         "author": book_author,
         "publication_year": publication_year,
         "genre": genre,
         "read_this_book": read_this_book}
-    
-    # Step 1: Check if the file exists and contains data
+    library: List[Book] = load_library()
+
+    library.append(new_book)  # Append the new book to the list
+
+    # Step 3: Save the updated library data back to the file
+    save_library(library)
+
+def load_library() -> List[Book]:
     try:
-        # Open the file in read mode to check its content
+        # Open the file in read mode
         with open("library.txt", "r") as file:
             content = file.read()
+            if content.strip():  # Check if the file has non-whitespace content
+                return json.loads(content)  # Parse the JSON content into a Python list
+            else:
+                return []  # Return an empty list if the file is empty
     except FileNotFoundError:
-        # If the file does not exist, initialize content as empty
-        content = ""
+        return []  # Return an empty list if the file does not exist
 
-    # Step 2: Decide whether to append or overwrite
-    if content.strip():  # Check if the file has non-whitespace content
-        # Append the new data to the existing content
-        with open("library.txt", "a") as file:
-            file.write("\n" + str(library))  # Add a newline before appending
-    else:
-        # Write the new data directly (file is empty or does not exist)
-        with open("library.txt", "w") as file:
-            file.write(str(library))
+
+# Function to save the library data to the file
+def save_library(library_data: Library):
+    with open("library.txt", "w") as file:
+        json.dump(library_data, file, indent=4)  # Write the data as a JSON array with indentation
+
 
 def remove_a_book() -> None:
     title_of_book: str = str(input("Enter the title of the book to remove: "))
@@ -94,7 +113,12 @@ def search_by_author(author: str) -> None:
     print("Search by author", author)
 
 def display_all_books() -> None:
-    print("Display all books")
+    with open("library.txt", "r") as file:
+        content = file.read()
+        content_list = list(content.split("\n"))
+        print(content_list[0])
+        # for book in content_list:
+        #     print(book)
 
 def display_statics() -> None:
     print("Display statics")
