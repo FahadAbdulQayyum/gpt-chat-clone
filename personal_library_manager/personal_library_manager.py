@@ -1,8 +1,8 @@
 import json
-from typing import List, Dict, Any
+from typing import List, Dict
 
 # Define the type for a single book entry
-Book = Dict[str, Any]
+Book = Dict[str, str]
 
 # Define the type for the library (a list of books)
 Library = List[Book]
@@ -51,7 +51,7 @@ def add_a_book() -> None:
         "book_author": book_author,
         "publication_year": publication_year,
         "genre": genre,
-        "read_this_book": read_this_book.lower() == "yes"  # Convert to boolean
+        "read_this_book": read_this_book  # Convert to boolean
     }
 
     # Load the existing library
@@ -147,11 +147,10 @@ def display_all_books() -> None:
 def display_statistics() -> None:
     library: Library = load_library()
     total_books = len(library)
-    read_books = sum(1 for book in library if book["read_this_book"]=="yes")
-    unread_books = total_books - read_books
+    read_books = sum(1 for book in library if book["read_this_book"])
+    percentage_read = (read_books / total_books) * 100
 
-    print(f"Total Books: {total_books}")
-    print(f"Read Books: {read_books}")
-    print(f"Unread Books: {unread_books}")
+    print(f"Total books: {total_books}")
+    print(f"Percentage read: {percentage_read}%")
 
 menu()
